@@ -203,6 +203,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "ollama" },
+    { name = "pydantic" },
     { name = "uvicorn" },
 ]
 
@@ -210,6 +211,7 @@ dependencies = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.136.1" },
     { name = "ollama", specifier = ">=0.6.2" },
+    { name = "pydantic", specifier = ">=2.13.4" },
     { name = "uvicorn", specifier = ">=0.47.0" },
 ]
 
