@@ -1,3 +1,4 @@
+import uvicorn
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -23,3 +24,16 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(create_api_router())
+
+
+def run():
+    """
+    CLI entrypoint.
+    """
+    uvicorn.run(
+        "text_translator_server.main:app", host="127.0.0.1", port=8000, reload=True
+    )
+
+
+if __name__ == "__main__":
+    run()
