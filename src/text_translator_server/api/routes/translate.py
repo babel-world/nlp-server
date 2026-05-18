@@ -6,7 +6,7 @@ from text_translator_server.services.translate import translate as translate_ser
 router = APIRouter(prefix="/translate", tags=["translate"])
 
 
-@router.post("", response_model=TranslateResponseBody)
+@router.post("", response_model=TranslateResponseBody, response_model_by_alias=True)
 async def translate_endpoint(body: TranslateRequestBody):
     result_str = await translate_service(
         body.source_lang, body.target_lang, body.source_text
