@@ -1,7 +1,7 @@
 from ollama import AsyncClient
 
 from text_translator_server.config.settings import (
-    LANG_CODE,
+    LangCode,
     LANG_NAMES,
     TEXT_END_MARKER,
     TEXT_START_MARKER,
@@ -19,7 +19,7 @@ def _sanitize_user_text(text: str) -> str:
     )
 
 
-def _build_prompt(source: LANG_CODE, target: LANG_CODE, text: str) -> str:
+def _build_prompt(source: LangCode, target: LangCode, text: str) -> str:
     return TRANSLATE_PROMPT.format(
         SOURCE_LANG=LANG_NAMES[source],
         SOURCE_CODE=source,
@@ -33,8 +33,8 @@ def _build_prompt(source: LANG_CODE, target: LANG_CODE, text: str) -> str:
 
 async def translate(
     client: AsyncClient,
-    source: LANG_CODE,
-    target: LANG_CODE,
+    source: LangCode,
+    target: LangCode,
     text: str,
 ) -> str:
     response = await client.chat(

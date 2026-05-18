@@ -1,8 +1,8 @@
 from typing import Final, Literal
 
-LANG_CODE = Literal["zh", "en", "ja"]
+type LangCode = Literal["zh", "en", "ja"]
 
-LANG_NAMES: Final[dict[LANG_CODE, str]] = {
+LANG_NAMES: Final[dict[LangCode, str]] = {
     "zh": "Chinese",
     "en": "English",
     "ja": "Japanese",
