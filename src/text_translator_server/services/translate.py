@@ -1,6 +1,6 @@
 from ollama import AsyncClient
 
-from text_translator_server.config.index import (
+from text_translator_server.config.settings import (
     LANG_CODE,
     LANG_NAMES,
     TRANSLATE_MODEL,
