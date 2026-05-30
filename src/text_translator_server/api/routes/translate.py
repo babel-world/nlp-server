@@ -3,6 +3,7 @@ from ollama import AsyncClient
 
 from text_translator_server.api.deps import get_ollama_client
 from text_translator_server.schemas.translate import TranslateRequestBody, TranslateResponseBody
+from text_translator_server.services.translate import start_model
 from text_translator_server.services.translate import stop_model
 from text_translator_server.services.translate import translate as translate_service
 
@@ -33,6 +34,24 @@ async def translate_endpoint(
     )
 
     return TranslateResponseBody(translated_text=result_str)
+
+
+@router.post(
+    "/start",
+    summary="Start Translation Model",
+    response_description="Confirmation that the model has been loaded",
+)
+async def start_model_endpoint(
+    client: AsyncClient = Depends(get_ollama_client),
+):
+    """
+    Preload the translation model into memory (GPU/RAM) and keep it resident.
+
+    Equivalent to running `ollama run translategemma:latest ""` with keep_alive=-1.
+    """
+    await start_model(client)
+
+    return {"status": "started"}
 
 
 @router.post(

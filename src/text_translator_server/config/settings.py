@@ -21,3 +21,4 @@ Produce only the {TARGET_LANG} translation, without any additional explanations 
 """
 
 TRANSLATE_MODEL = "translategemma:latest"
+MODEL_KEEP_ALIVE = -1

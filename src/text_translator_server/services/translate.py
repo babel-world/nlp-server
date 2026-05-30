@@ -3,6 +3,7 @@ from ollama import AsyncClient
 from text_translator_server.config.settings import (
     LangCode,
     LANG_NAMES,
+    MODEL_KEEP_ALIVE,
     TEXT_END_MARKER,
     TEXT_START_MARKER,
     TRANSLATE_MODEL,
@@ -40,11 +41,20 @@ async def translate(
     response = await client.chat(
         model=TRANSLATE_MODEL,
         messages=[{"role": "user", "content": _build_prompt(source, target, text)}],
+        keep_alive=MODEL_KEEP_ALIVE,
     )
 
     translated_text = (response.message.content or "").strip()
 
     return translated_text
+
+
+async def start_model(client: AsyncClient) -> None:
+    await client.generate(
+        model=TRANSLATE_MODEL,
+        prompt="",
+        keep_alive=MODEL_KEEP_ALIVE,
+    )
 
 
 async def stop_model(client: AsyncClient) -> None:
