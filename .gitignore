@@ -8,8 +8,5 @@
 dist/
 *.egg-info/
 
-# Local-only notes and drafts (not tracked)
-private-docs/
-
 # Environment variables
 .env
