@@ -17,20 +17,24 @@
 ## 用法
 
 ```python
-from nlp_server.services.tn.zh import TextNormalizer
+from nlp_server.services.tn.zh import tn_zh
+
+result = tn_zh("明天有62％的概率降雨")
+# 明天有百分之六十二的概率降雨
+```
+
+HTTP：`POST /api/tn/zh`，请求/响应均为 `{ "text": "..." }`。
+
+底层实现位于 `vendor/`（上游 Paddle/GPT-SoVITS 代码）；`core.py` 为 nlp-server 调用封装。
+
+旧示例（直接使用 vendor）：
+
+```python
+from nlp_server.services.tn.zh.vendor import TextNormalizer
 
 normalizer = TextNormalizer()
 sentences = normalizer.normalize("明天有62％的概率降雨")
-# ['明天有百分之六十二的概率降雨']
-
 text = "".join(sentences)
-```
-
-单句处理：
-
-```python
-normalizer.normalize_sentence("等会请在12:05请通知我")
-# '等会请在十二点零五分请通知我'
 ```
 
 ## 支持的 NSW 示例
@@ -55,4 +59,4 @@ normalizer.normalize_sentence("等会请在12:05请通知我")
 ## 说明
 
 - 文件名 `text_normlization.py` 为上游拼写，未改。
-- 当前仅 vendored 到本仓库，尚未挂 API 端点；后续可在 `g2p/zh` 等流程前调用。
+- 当前已提供 `POST /api/tn/zh`；`vendor/` 为上游代码，业务封装见 `core.py`。

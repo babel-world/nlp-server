@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from nlp_server.api.routes.g2p import router as g2p_router
 from nlp_server.api.routes.ollama import router as ollama_router
 from nlp_server.api.routes.split_lang import router as split_lang_router
+from nlp_server.api.routes.tn import router as tn_router
 
 
 def create_api_router() -> APIRouter:
@@ -9,4 +10,5 @@ def create_api_router() -> APIRouter:
     api.include_router(ollama_router, prefix="/api")
     api.include_router(g2p_router, prefix="/api")
     api.include_router(split_lang_router, prefix="/api")
+    api.include_router(tn_router, prefix="/api")
     return api

@@ -1,5 +1,5 @@
 """Text normalization services."""
 
-from nlp_server.services.tn.zh import TextNormalizer
+from nlp_server.services.tn.zh.core import tn_zh
 
-__all__ = ["TextNormalizer"]
+__all__ = ["tn_zh"]
