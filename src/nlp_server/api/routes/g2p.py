@@ -7,15 +7,15 @@ from nlp_server.schemas.g2p import (
     G2pWorkerStateResponseBody,
     JaG2pRequestBody,
     JaG2pResponseBody,
-    ZhHansG2pRequestBody,
-    ZhHansG2pResponseBody,
+    ZhG2pRequestBody,
+    ZhG2pResponseBody,
 )
 from nlp_server.services.g2p import (
     g2p_en,
     g2p_ja,
-    g2p_zh_hans,
-    g2p_zh_hans_start,
-    g2p_zh_hans_stop,
+    g2p_zh,
+    g2p_zh_start,
+    g2p_zh_stop,
 )
 
 
@@ -74,22 +74,21 @@ async def g2p_en_endpoint(body: EnG2pRequestBody) -> EnG2pResponseBody:
 
 
 @router.post(
-    "/zh-hans",
-    response_model=ZhHansG2pResponseBody,
+    "/zh",
+    response_model=ZhG2pResponseBody,
     response_model_by_alias=True,
-    summary="Simplified Chinese G2P",
-    response_description="Per-character pinyin list aligned with input text",
+    summary="Chinese G2P",
+    response_description="Per-character pinyin list from g2pW",
     description=(
-        "Convert simplified Chinese text to per-character pinyin via g2pW. "
-        "Non-Chinese characters (punctuation, Latin letters, etc.) are preserved "
-        "as-is in the output. "
+        "Convert Chinese text to per-character pinyin via g2pW. "
+        "Output is the raw g2pW result (null for positions without a reading). "
         "The worker starts automatically on the first request; call "
-        "``POST /g2p/zh-hans/stop`` after batch processing to release memory."
+        "``POST /g2p/zh/stop`` after batch processing to release memory."
     ),
 )
-async def g2p_zh_hans_endpoint(body: ZhHansG2pRequestBody) -> ZhHansG2pResponseBody:
+async def g2p_zh_endpoint(body: ZhG2pRequestBody) -> ZhG2pResponseBody:
     try:
-        phones = await g2p_zh_hans(body.text)
+        phones = await g2p_zh(body.text)
     except WorkerSpawnTimeout as exc:
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
@@ -106,22 +105,22 @@ async def g2p_zh_hans_endpoint(body: ZhHansG2pRequestBody) -> ZhHansG2pResponseB
             detail=str(exc),
         ) from exc
 
-    return ZhHansG2pResponseBody(phones=phones)
+    return ZhG2pResponseBody(phones=phones)
 
 
 @router.post(
-    "/zh-hans/start",
+    "/zh/start",
     response_model=G2pWorkerStateResponseBody,
     response_model_by_alias=True,
     summary="Preload g2pw worker (optional)",
     description=(
         "Explicitly start the persistent g2pw worker and load models. "
-        "If not called, ``POST /g2p/zh-hans`` will start the worker on first use."
+        "If not called, ``POST /g2p/zh`` will start the worker on first use."
     ),
 )
-async def g2p_zh_hans_start_endpoint() -> G2pWorkerStateResponseBody:
+async def g2p_zh_start_endpoint() -> G2pWorkerStateResponseBody:
     try:
-        return await g2p_zh_hans_start()
+        return await g2p_zh_start()
     except WorkerSpawnTimeout as exc:
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
@@ -140,11 +139,11 @@ async def g2p_zh_hans_start_endpoint() -> G2pWorkerStateResponseBody:
 
 
 @router.post(
-    "/zh-hans/stop",
+    "/zh/stop",
     response_model=G2pWorkerStateResponseBody,
     response_model_by_alias=True,
     summary="Release g2pw worker",
     description="Stop the persistent g2pw worker subprocess and release memory.",
 )
-async def g2p_zh_hans_stop_endpoint() -> G2pWorkerStateResponseBody:
-    return await g2p_zh_hans_stop()
+async def g2p_zh_stop_endpoint() -> G2pWorkerStateResponseBody:
+    return await g2p_zh_stop()

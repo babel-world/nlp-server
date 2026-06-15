@@ -4,10 +4,10 @@ from nlp_server.schemas.g2p import G2pWorkerStateResponseBody
 from nlp_server.services.g2p.en.default import g2p_en
 from nlp_server.services.g2p.ja.default import extract
 from nlp_server.services.g2p.ja.prosody import extract_prosody
-from nlp_server.services.g2p.zh.hans import (
-    g2p_zh_hans,
-    g2p_zh_hans_start,
-    g2p_zh_hans_stop,
+from nlp_server.services.g2p.zh.default import (
+    g2p_zh,
+    g2p_zh_start,
+    g2p_zh_stop,
 )
 
 JaG2pMode = Literal["default", "prosody"]
@@ -25,7 +25,7 @@ __all__ = [
     "JaG2pMode",
     "g2p_en",
     "g2p_ja",
-    "g2p_zh_hans",
-    "g2p_zh_hans_start",
-    "g2p_zh_hans_stop",
+    "g2p_zh",
+    "g2p_zh_start",
+    "g2p_zh_stop",
 ]

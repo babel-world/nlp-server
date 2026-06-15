@@ -1,4 +1,4 @@
-"""Simplified Chinese G2P via g2pw worker."""
+"""Chinese G2P via g2pw worker."""
 
 from __future__ import annotations
 
@@ -13,32 +13,20 @@ WORKER_ALIAS = "g2pw"
 _g2p_lock = asyncio.Lock()
 
 
-def merge_phones_with_text(
-    text: str,
-    g2pw_result: list[list[str | None]],
-) -> list[str]:
-    """Replace g2pW ``null`` slots with the original character at that index."""
-    if len(g2pw_result) != 1:
+def _extract_phones_row(parsed: list[list[str | None]]) -> list[str | None]:
+    if len(parsed) != 1:
         raise ValueError("g2pW returned multiple sentences; single text expected")
-    row = g2pw_result[0]
-    if len(row) != len(text):
-        raise ValueError(
-            f"g2pW length mismatch: text={len(text)} phones={len(row)}"
-        )
-    return [
-        text[i] if token is None else str(token)
-        for i, token in enumerate(row)
-    ]
+    return parsed[0]
 
 
 def _session():
     return get_worker_session(WORKER_ALIAS)
 
 
-def sync_g2p_zh_hans(text: str) -> list[str]:
+def sync_g2p_zh(text: str) -> list[str | None]:
     raw = _session().g2p_text(text)
     parsed = json.loads(raw)
-    return merge_phones_with_text(text, parsed)
+    return _extract_phones_row(parsed)
 
 
 def sync_start_session() -> G2pWorkerStateResponseBody:
@@ -67,16 +55,16 @@ def sync_stop_session() -> G2pWorkerStateResponseBody:
     )
 
 
-async def g2p_zh_hans(text: str) -> list[str]:
+async def g2p_zh(text: str) -> list[str | None]:
     async with _g2p_lock:
-        return await asyncio.to_thread(sync_g2p_zh_hans, text)
+        return await asyncio.to_thread(sync_g2p_zh, text)
 
 
-async def g2p_zh_hans_start() -> G2pWorkerStateResponseBody:
+async def g2p_zh_start() -> G2pWorkerStateResponseBody:
     async with _g2p_lock:
         return await asyncio.to_thread(sync_start_session)
 
 
-async def g2p_zh_hans_stop() -> G2pWorkerStateResponseBody:
+async def g2p_zh_stop() -> G2pWorkerStateResponseBody:
     async with _g2p_lock:
         return await asyncio.to_thread(sync_stop_session)
