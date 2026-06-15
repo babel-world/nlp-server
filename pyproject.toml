@@ -25,6 +25,7 @@ dependencies = [
     "pydantic>=2.13.4",
     "pyopenjtalk-plus>=0.4.1.post8",
     "python-dotenv>=1.2.2",
+    "split-lang>=2.1.1",
     "uvicorn>=0.47.0",
 ]
 
