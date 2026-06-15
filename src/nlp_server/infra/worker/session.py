@@ -177,6 +177,14 @@ class PersistentWorkerSession:
             }
         )
 
+    def g2p_text(self, text: str) -> str:
+        """Run the ``g2p`` command and return the JSON result string."""
+        response = self.request({"cmd": "g2p", "text": text})
+        result = response.get("result")
+        if not isinstance(result, str):
+            raise RuntimeError("worker returned invalid g2p result")
+        return result
+
     def _start_locked(self) -> None:
         if self._proc is not None and self._proc.poll() is None:
             return

@@ -47,6 +47,7 @@ def get_converter() -> G2PWConverter:
     """Return a cached G2PWConverter configured for simplified Chinese pinyin."""
     global _converter
     _ensure_vendor_path()
+    download._configure_hf_cache_env()
     from g2pw.api import G2PWConverter
 
     model_dir = download.ensure_onnx_model_dir()

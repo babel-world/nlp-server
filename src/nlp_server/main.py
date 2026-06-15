@@ -6,6 +6,7 @@ from ollama import AsyncClient
 
 from nlp_server.api.router import create_api_router
 from nlp_server.config.settings import SERVER_PORT
+from nlp_server.infra.worker.session import get_worker_session
 from nlp_server.services.ollama import stop_model
 
 
@@ -18,6 +19,10 @@ async def lifespan(app: FastAPI):
     finally:
         try:
             await stop_model(client)
+        except Exception:
+            pass
+        try:
+            get_worker_session("g2pw").stop()
         except Exception:
             pass
         await client._client.aclose()
