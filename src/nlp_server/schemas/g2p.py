@@ -81,6 +81,53 @@ class ZhHansG2pResponseBody(BaseModel):
     )
 
 
+class EnG2pRequestBody(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True,
+        alias_generator=to_camel,
+        json_schema_extra={
+            "examples": [
+                {
+                    "text": "Hello, world.",
+                }
+            ]
+        },
+    )
+
+    text: str = Field(min_length=1, description="English text to convert to phonemes")
+
+
+class EnG2pResponseBody(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True,
+        alias_generator=to_camel,
+        json_schema_extra={
+            "examples": [
+                {
+                    "phones": [
+                        "HH",
+                        "AH0",
+                        "L",
+                        "OW1",
+                        ",",
+                        " ",
+                        "W",
+                        "ER1",
+                        "L",
+                        "D",
+                        ".",
+                    ],
+                }
+            ]
+        },
+    )
+
+    phones: list[str] = Field(
+        description="ARPAbet phoneme sequence from g2p_en; word separators and "
+        "punctuation are preserved as tokens",
+    )
+
+
 class G2pWorkerStateResponseBody(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel,

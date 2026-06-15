@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, status
 
 from nlp_server.infra.worker.errors import WorkerSpawnFailed, WorkerSpawnTimeout
 from nlp_server.schemas.g2p import (
+    EnG2pRequestBody,
+    EnG2pResponseBody,
     G2pWorkerStateResponseBody,
     JaG2pRequestBody,
     JaG2pResponseBody,
@@ -9,6 +11,7 @@ from nlp_server.schemas.g2p import (
     ZhHansG2pResponseBody,
 )
 from nlp_server.services.g2p import (
+    g2p_en,
     g2p_ja,
     g2p_zh_hans,
     g2p_zh_hans_start,
@@ -39,6 +42,35 @@ def g2p_ja_endpoint(body: JaG2pRequestBody):
         raise HTTPException(status_code=500, detail=f"G2P failed: {exc}") from exc
 
     return JaG2pResponseBody(phones=phones)
+
+
+@router.post(
+    "/en",
+    response_model=EnG2pResponseBody,
+    response_model_by_alias=True,
+    summary="English G2P",
+    response_description="ARPAbet phoneme token list",
+    description=(
+        "Convert English text to ARPAbet phonemes via g2p_en. "
+        "Output is the raw g2p_en token list, including word-separator "
+        "and punctuation tokens."
+    ),
+)
+async def g2p_en_endpoint(body: EnG2pRequestBody) -> EnG2pResponseBody:
+    try:
+        phones = await g2p_en(body.text)
+    except RuntimeError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc),
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"G2P failed: {exc}",
+        ) from exc
+
+    return EnG2pResponseBody(phones=phones)
 
 
 @router.post(
